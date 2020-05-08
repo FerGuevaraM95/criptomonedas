@@ -1,13 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableHighlight, Alert } from 'react-native';
 import {Picker} from '@react-native-community/picker';
 import axios from 'axios';
 
-export const Form = () => {
-
-  const [currency, setCurrency] = useState('');
-  const [cryptoCurrency, setCryptoCurrency] = useState('');
-  const [cryptoCurrencies, setCryptoCurrencies] = useState('');
+export const Form = ({currency, cryptoCurrency, setCurrency, setCryptoCurrency, saveGetAPI}) => {
+  const [cryptoCurrencies, setCryptoCurrencies] = useState([]);
 
   useEffect(() => {
     const getAPI = async () => {
@@ -24,6 +21,18 @@ export const Form = () => {
 
   const getCryptoCurrency = (cryptoCurrency) => {
     setCryptoCurrency(cryptoCurrency);
+  };
+
+  const quotePrice = () => {
+    if (!currency.trim() || !cryptoCurrency.trim()) {
+      showAlert();
+      return;
+    }
+    saveGetAPI(true);
+  };
+
+  const showAlert = () => {
+    Alert.alert('Error...', 'Ambos campos son obligatorios', [{text: 'OK'}]);
   };
 
   return (
@@ -53,6 +62,10 @@ export const Form = () => {
           />
         ))}
       </Picker>
+
+      <TouchableHighlight style={styles.quoteBtn} onPress={() => quotePrice()}>
+        <Text style={styles.quoteText}>Cotizar</Text>
+      </TouchableHighlight>
     </View>
   );
 };
@@ -63,5 +76,17 @@ const styles = StyleSheet.create({
     fontFamily: 'Lato-Black',
     fontSize: 22,
     textTransform: 'uppercase',
+  },
+  quoteBtn: {
+    margin: 20,
+    padding: 10,
+    backgroundColor: '#5E49E2',
+  },
+  quoteText: {
+    fontSize: 18,
+    fontFamily: 'Lato-Black',
+    textTransform: 'uppercase',
+    textAlign: 'center',
+    color: '#FFFFFF',
   },
 });
